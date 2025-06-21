@@ -5,6 +5,7 @@ import { CreateUserSchema,SigninSchema,CreateRoomSchema} from "@repo/common/type
 import  cors from "cors"; 
 
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import { JWT_SECRET } from "@repo/backend-common/config"
 
 // zod 
@@ -19,10 +20,11 @@ app.post("/signup",async (req,res)=>{
         return;
     }
     try {
+         const hashedpassword= await bcrypt.hash(parsedata.data.password,10);
          const user=await prisma.user.create({
             data:{
                name:parsedata.data.name,
-               password:parsedata.data.password,
+               password:hashedpassword,
                email:parsedata.data.email
             }
         })
@@ -44,12 +46,16 @@ app.post("/signin",async(req,res)=>{
       const user = await prisma.user.findFirst({
         where: {
             email: parsedata.data.email,
-            password: parsedata.data.password
         }
     })
     if(!user){
         res.json({"message":"not authorized"});
         return ;
+    }
+    const isMatch = await bcrypt.compare(parsedata.data.password, user.password);
+    if(!isMatch){
+      res.status(400).json({ error: 'Invalid credentials' })
+      return ;
     }
     // create toeken send it 
     try {
