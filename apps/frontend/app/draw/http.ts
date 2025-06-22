@@ -6,7 +6,7 @@ export async function getExistingShapes(roomId: string) {
     console.log(res.data);
     const messages = res.data.messages;
 
-    const shapes = messages.map((x: {message: string}) => {
+    const shapes = messages?.map((x: {message: string}) => {
         const messageData = JSON.parse(x.message)
         return messageData.shape;
     })

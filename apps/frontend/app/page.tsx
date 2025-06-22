@@ -107,7 +107,7 @@ const ExcelDrawLanding: React.FC = () => {
              SignIn
             </button>
             <button onClick={()=>{
-                router.push("/signin");
+                router.push("/signup");
             }}  className="border border-gray-300 text-gray-700 px-8 py-3 rounded-md text-lg hover:bg-gray-50">
               SignUp
             </button>

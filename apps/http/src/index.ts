@@ -28,7 +28,7 @@ app.post("/signup",async (req,res)=>{
                email:parsedata.data.email
             }
         })
-        res.json({
+        res.status(200).json({
             userId:user.id
         })  
     } catch (error) {
@@ -62,7 +62,7 @@ app.post("/signin",async(req,res)=>{
       const token=jwt.sign({
         userId:user?.id
       },JWT_SECRET)
-        res.json({
+        res.status(200).json({
             token
         })
     } catch (error) {
@@ -87,8 +87,25 @@ app.post("/createroom", auth,async(req,res)=>{
                 adminId:userId
             }
         }) 
-        res.json({
+        res.status(200).json({
             roomId:room.id
+        })
+    } catch (error) {
+        res.json({"msg":"room exist"})
+    }
+})
+app.post("/joinroom", auth,async(req,res)=>{
+     const roomname=req.body.roomname;
+    try {
+        // adding to sb
+        //@ts-ignore
+         const room=await prisma.room.findFirst({
+            where:{
+                slug:roomname
+            }
+        }) 
+        res.status(200).json({
+            roomId:room?.id
         })
     } catch (error) {
         res.json({"msg":"room exist"})
